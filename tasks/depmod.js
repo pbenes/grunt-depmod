@@ -19,32 +19,17 @@ module.exports = function (grunt) {
          * standard output.
          * @type {string}
          */
-        outputFile: './html/scripts/depmod.js'
+        outputFile: this.data.outputFile
       });
 
-      // console.log(require('util').inspect(this), this.filesSrc);
-      // console.log(this.files.src);
-      grunt.log.writeln('Depmodding ' + this.filesSrc.length + ' files.');
       // var files = this.files;
       var outputFile = options.outputFile;
-      var type = options.type || 'old'; // generate depmod for rake our just plain JSON?
+      grunt.log.writeln('Depmodding ' + this.filesSrc.length + ' files. ');
 
-      delete options.type;
       delete options.outputFile;
 
-      var contents = '';
       var deps = depmod.getDepmod(this.filesSrc);
-      if (type == 'old') {
-        var json = JSON.stringify(deps).replace(/},"/g, "}\n,\n\"");
-        contents = "// THIS IS A GENERATED FILE, run 'grunt depmod' to rebuild\n"+
-                   "//\n"+
-                   "window.GDC = window.GDC || {};\n"+
-                   "GDC.YUIConfig = GDC.YUIConfig || {};\n"+
-                   "GDC.YUIConfig.modules =\n"+
-                   "{  //BEG-JSON\n" + json.substring(1, (json.length-1)) + "\n}; //END-JSON";
-      } else {
-        contents = 'module.exports = ' + JSON.stringify(deps).replace(/},"/g, "}\n,\n\"");
-      }
+      var contents = JSON.stringify(deps);
       grunt.file.write(outputFile, contents);
     }
   );

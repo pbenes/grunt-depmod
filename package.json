@@ -11,6 +11,10 @@
     "depmod"
   ],
   "author": "Adam Kloboucnik <adam.kloboucnik@gooddata.com>",
+  "devDependencies": {
+      "grunt-simple-mocha": "*",
+      "should": "*"
+  },
   "dependencies": {
       "esprima": "~1.0.2"
     },
