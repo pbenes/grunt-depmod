@@ -19,16 +19,27 @@ module.exports = function (grunt) {
          * standard output.
          * @type {string}
          */
-        outputFile: this.data.outputFile
+        outputFile: this.data.outputFile,
+
+        /**
+         * Exclude srcFiles pathname regexp
+         * @type {string}
+         */
+        exclude: this.data.exclude
       });
 
-      // var files = this.files;
+      var exclude = options.exclude && new RegExp(options.exclude);
+      var files = this.filesSrc;
+      if (exclude) files = files.filter(function(f) {
+          return !exclude.test(f);
+      });
+
       var outputFile = options.outputFile;
-      grunt.log.writeln('Depmodding ' + this.filesSrc.length + ' files. ');
+      grunt.log.writeln('Depmodding ' + files.length + ' files. ');
 
       delete options.outputFile;
 
-      var deps = depmod.getDepmod(this.filesSrc);
+      var deps = depmod.getDepmod(files);
       var contents = JSON.stringify(deps);
       grunt.file.write(outputFile, contents);
     }
