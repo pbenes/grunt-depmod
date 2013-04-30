@@ -6,15 +6,29 @@
  */
 module.exports = function (grunt) {
 
-var cnt= 0;
-  function resolve(mods, modName, resolved) {
+  function extend(a, b) { for (var x in b) a[x] = b[x] }
+
+  function resolve(mods, modName) {
+      var deps = _resolve(mods, modName, {});
+      var fileHash = {};
+      var files = deps.reduce(function(files, m) {
+          if (fileHash[m.path]) return files;
+
+          fileHash[m.path] = m;
+          files.push(m.path);
+          return files;
+      }, []);
+      return files;
+  }
+
+  function _resolve(mods, modName, resolved) {
       var mod = mods[modName];
       if (!mod || resolved[modName]) return [];
       resolved[modName] = true;
 
       var deps = [];
       mod.requires && mod.requires.forEach(function(n) {
-          deps.push.apply(deps, resolve(mods, n, resolved));
+          deps.push.apply(deps, _resolve(mods, n, resolved));
       });
       deps.push(mod);
 
@@ -46,11 +60,20 @@ var cnt= 0;
         module: this.data.module
       });
 
-      var depmod = grunt.file.read(options.modulesInfo);
-      depmod = depmod && JSON.parse(depmod);
+      var depmod = {};
+      var modInfos = options.modulesInfo;
 
-      var deps = resolve(depmod, options.module, {});
-      deps = deps.map(function(m) { return m.name +" : "+m.path; });
+      // make the modulesInfo an array if it is not
+      if (modInfos.constructor !== Array) {
+          modInfos = [ modInfos ];
+      }
+      modInfos.forEach(function(depmodFilename) {
+          var contents = grunt.file.read(depmodFilename);
+          contents && extend(depmod, JSON.parse(contents));
+      });
+
+      var deps = resolve(depmod, options.module);
+      // deps = deps.map(function(m) { return m.name +" : "+m.path; });
 
       if (options.outputFile) {
           grunt.file.write(options.outputFile, JSON.stringify(deps, null, 2));

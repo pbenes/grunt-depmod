@@ -25,13 +25,20 @@ module.exports = function (grunt) {
          * Exclude srcFiles pathname regexp
          * @type {string}
          */
-        exclude: this.data.exclude
+        exclude: this.data.exclude,
+
+        processName: this.data.processName
       });
 
-      var exclude = options.exclude && new RegExp(options.exclude);
+      var exclude = options.exclude;
+      if (typeof exclude === 'string') {
+          exclude = [ exclude ];
+      }
+      exclude = exclude && exclude.map(function(e) { return new RegExp(e); });
+
       var files = this.filesSrc;
       if (exclude) files = files.filter(function(f) {
-          return !exclude.test(f);
+          return !exclude.some(function(e) { return e.test(f) });
       });
 
       var outputFile = options.outputFile;
@@ -39,7 +46,7 @@ module.exports = function (grunt) {
 
       delete options.outputFile;
 
-      var deps = depmod.getDepmod(files);
+      var deps = depmod.getDepmod(files, options);
       var contents = JSON.stringify(deps);
       grunt.file.write(outputFile, contents);
     }
