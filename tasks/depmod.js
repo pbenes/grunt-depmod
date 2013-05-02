@@ -13,14 +13,17 @@ module.exports = function (grunt) {
   grunt.registerMultiTask('depmod', 'Calculate dependencies.', function () {
       this.files.forEach(function(f) {
           var options = this.options({
+            callback: f.callback,
             processName: f.processName
           });
 
           grunt.log.writeln('Depmodding ' + f.src.length + ' files. ');
 
           var deps = depmod.getDepmod(f.src, options);
-          var contents = JSON.stringify(deps);
-          grunt.file.write(f.dest, contents);
+          if (f.dest) {
+              var contents = JSON.stringify(deps);
+              grunt.file.write(f.dest, contents);
+          }
       }, this);
   });
 };
