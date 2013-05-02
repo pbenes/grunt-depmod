@@ -10,45 +10,35 @@ module.exports = function (grunt) {
       depmod = require('../lib/esprima-depmod');
 
   // TODO: investigate why multiTask is necessary to have this.filesSrc
-  grunt.registerMultiTask('depmod', 'Calculate dependencies.',
-    function () {
+  grunt.registerMultiTask('depmod', 'Calculate dependencies.', function () {
+      this.files.forEach(function(f) {
+          var options = this.options({
+            /**
+             * Exclude srcFiles pathname regexp
+             * @type {string}
+             */
+            // exclude: f.exclude,
 
-      var options = this.options({
-        /**
-         * If specified, write output to this path instead of writing to
-         * standard output.
-         * @type {string}
-         */
-        outputFile: this.data.outputFile,
+            processName: f.processName
+          });
 
-        /**
-         * Exclude srcFiles pathname regexp
-         * @type {string}
-         */
-        exclude: this.data.exclude,
+          // exclude regexp string/list instantiation
+          var exclude = f.exclude;
+          if (typeof exclude === 'string') {
+              exclude = [ exclude ];
+          }
+          exclude = exclude && exclude.map(function(e) { return new RegExp(e); });
 
-        processName: this.data.processName
-      });
+          var srcs = f.src;
+          if (exclude) srcs = srcs.filter(function(f) {
+              return !exclude.some(function(e) { return e.test(f) });
+          });
 
-      var exclude = options.exclude;
-      if (typeof exclude === 'string') {
-          exclude = [ exclude ];
-      }
-      exclude = exclude && exclude.map(function(e) { return new RegExp(e); });
+          grunt.log.writeln('Depmodding ' + srcs.length + ' files. ');
 
-      var files = this.filesSrc;
-      if (exclude) files = files.filter(function(f) {
-          return !exclude.some(function(e) { return e.test(f) });
-      });
-
-      var outputFile = options.outputFile;
-      grunt.log.writeln('Depmodding ' + files.length + ' files. ');
-
-      delete options.outputFile;
-
-      var deps = depmod.getDepmod(files, options);
-      var contents = JSON.stringify(deps);
-      grunt.file.write(outputFile, contents);
-    }
-  );
+          var deps = depmod.getDepmod(srcs, options);
+          var contents = JSON.stringify(deps);
+          grunt.file.write(f.dest, contents);
+      }, this);
+  });
 };
