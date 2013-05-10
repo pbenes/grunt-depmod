@@ -13,7 +13,6 @@ module.exports = function (grunt) {
   grunt.registerMultiTask('depmod', 'Calculate dependencies.', function () {
       this.files.forEach(function(f) {
           var options = this.options({
-            callback: f.callback,
             processName: f.processName
           });
 
