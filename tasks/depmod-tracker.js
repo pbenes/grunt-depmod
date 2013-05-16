@@ -22,12 +22,14 @@ module.exports = function (grunt) {
             grunt.file.expand(patterns).forEach(function(fn) {
                 this.merge(fn);
             }, this);
+
+            this._mods['*'] = this._mods;
         },
 
         dispose: function(filepath) {
             var mods = this._files[filepath] || {};
             Object.keys(mods).forEach(function(k) {
-                console.log('dispose module', this._mods[k], k);
+                // console.log('dispose module', this._mods[k], k);
                 delete this._mods[k];
             }, this);
             delete this._files[filepath];
@@ -41,6 +43,7 @@ module.exports = function (grunt) {
              });
              this._files[filepath] = mods;
              this.mergeMods(mods, filepath);
+             return mods;
         },
 
         mergeMods: function(mods, filepath) {
@@ -54,9 +57,15 @@ module.exports = function (grunt) {
 
         update: function(filepath) {
             this.dispose(filepath);
-            this.merge(filepath);
+            return this.merge(filepath);
         },
 
+        depmod: function(filepath) {
+            return this._files[filepath];
+        },
+        moduleMeta: function(modName) {
+            return this._mods[modName];
+        },
         resolveDependencies: function(modName) {
             return this._depmod.resolve(this._mods, modName);
         }
@@ -64,7 +73,11 @@ module.exports = function (grunt) {
 
     // export the interface
     grunt.depmod_tracker = {
-        resolveDependencies: deps.resolveDependencies.bind(deps)
+        resolveDependencies: deps.resolveDependencies.bind(deps),
+        moduleMeta: deps.moduleMeta.bind(deps),
+        depmod: deps.depmod.bind(deps),
+        update: deps.update.bind(deps),
+        deps: deps._mods
     };
 
     grunt.registerMultiTask('depmod-tracker', 'Resolve dependencies.', function () {
