@@ -44,7 +44,9 @@ module.exports = function (grunt) {
         mergeMods: function(mods, filepath) {
              Object.keys(mods).forEach(function(k) {
                  this._mods[k] = mods[k];
-                 // console.log('merge module', filepath, k);
+                 // file path... FIXME? not accurate for multiple mods per file
+                 this._files[mods[k].path] = mods[k];
+                 // console.log('merge module', k, mods[k]);
              }, this);
         },
 
