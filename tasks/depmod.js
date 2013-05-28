@@ -16,7 +16,7 @@ module.exports = function (grunt) {
             processName: f.processName
           });
 
-          grunt.log.writeln('Depmodding ' + f.src.length + ' files. ');
+          grunt.log.writeln('Depmodding ' + f.src.length + ' files.');
 
           var deps = depmod.getDepmod(f.src, options);
           if (f.dest) {

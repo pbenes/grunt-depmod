@@ -15,6 +15,7 @@ module.exports = function (grunt) {
         init: function(patterns, options) {
             // configurables
             this._processName = options.processName;
+            this._aliases = options.aliases;
             this._fs = options.fs;
 
             // initial dep parse
@@ -35,6 +36,7 @@ module.exports = function (grunt) {
         merge: function(filepath) {
              var mods = this._depmod.getDepmod([filepath], {
                  processName: this._processName,
+                 aliases: this._aliases,
                  fs: this._fs
              });
              this._files[filepath] = mods;
@@ -75,15 +77,16 @@ module.exports = function (grunt) {
                 */
                modulesInfo: f.modulesInfo,
 
-               processName: f.processName,
-               fs: f.fs
+               processName: f.processName
           });
+
+          var fs = options.fs;
 
           grunt.event.on('watch', function(action, filepath) {
               console.log('watch:tracker', filepath);
 
               // drop the file from the caching filesystem
-              f.fs && f.fs.invalidate && f.fs.invalidate(filepath);
+              fs && fs.invalidate && fs.invalidate(filepath);
 
               // invalidate old dependencies and resolve new ones
               deps.update(filepath);
@@ -92,7 +95,8 @@ module.exports = function (grunt) {
           // parse the deps of the watched files now
           deps.init(f.src, {
               processName: options.processName,
-              fs: options.fs
+              aliases: options.aliases,
+              fs: fs
           });
 
           // static init of the slowly changing dependencies (lib/**/*.js)
