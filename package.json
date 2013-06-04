@@ -1,29 +1,28 @@
 {
-  "name": "grunt-depmod",
-  "version": "0.1.0",
-  "description": "Grunt task for generating depmod.js",
-  "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
-  },
-  "repository": "",
-  "keywords": [
-    "grunt",
-    "depmod"
-  ],
-  "author": "Adam Kloboucnik <adam.kloboucnik@gooddata.com>",
-  "devDependencies": {
-      "grunt-simple-mocha": "*",
-      "should": "*"
-  },
-  "dependencies": {
-      "esprima": "~1.0.2"
-    },
+    "name": "grunt-depmod",
+    "version": "0.1.0",
+    "description": "Grunt task for .js module dependency analysis and tracking",
+    "repository": "https://github.com/opichals/grunt-depmod",
+    "keywords": [
+        "grunt",
+        "depmod"
+    ],
+    "author": "Adam Kloboucnik <adam.kloboucnik@gooddata.com>",
+    "license": "MIT",
+
     "scripts": {
-      "test": "grunt test"
+        "test": "grunt test"
     },
     "engines": {
-      "node": ">= 0.8.0"
+        "node": ">= 0.8.0"
     },
     "main": "lib",
-    "license": "MIT"
+
+    "dependencies": {
+        "esprima": "~1.0.2"
+    },
+    "devDependencies": {
+        "grunt-simple-mocha": "*",
+        "should": "*"
+    }
 }
