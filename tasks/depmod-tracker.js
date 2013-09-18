@@ -68,6 +68,21 @@ module.exports = function (grunt) {
         },
         resolveDependencies: function(modName) {
             return this._depmod.resolve(this._mods, modName);
+        },
+        paths: function() {
+            var deps = this._mods;
+
+            return Object.keys(deps).reduce(function(paths, key) {
+                if (key === '*') return paths;
+                // console.log("XXX", key, deps[key].path);
+                //paths[key] = deps[key].path.replace('html/', '').replace(/\.js$/, '');
+                var path = deps[key].path;
+
+                if (path.match(/\.js$/)) path = path.replace('html/', '');
+
+                paths[key] = path.replace(/\.js$/, '');
+                return paths;
+            }, {});
         }
     };
 
@@ -77,6 +92,7 @@ module.exports = function (grunt) {
         moduleMeta: deps.moduleMeta.bind(deps),
         depmod: deps.depmod.bind(deps),
         update: deps.update.bind(deps),
+        paths: deps.paths.bind(deps),
         deps: deps._mods
     };
 
