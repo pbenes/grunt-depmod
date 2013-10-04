@@ -30,6 +30,7 @@ module.exports = function (grunt) {
             var mods = this._files[filepath] || {};
             Object.keys(mods).forEach(function(k) {
                 // console.log('dispose module', this._mods[k], k);
+
                 delete this._mods[k];
             }, this);
             delete this._files[filepath];
@@ -49,8 +50,9 @@ module.exports = function (grunt) {
         mergeMods: function(mods, filepath) {
              Object.keys(mods).forEach(function(k) {
                  this._mods[k] = mods[k];
-                 // file path... FIXME? not accurate for multiple mods per file
+                 // note: would not work right for multiple mods per file
                  this._files[mods[k].path] = mods[k];
+
                  // console.log('merge module', k, mods[k]);
              }, this);
         },
@@ -62,9 +64,6 @@ module.exports = function (grunt) {
 
         depmod: function(filepath) {
             return this._files[filepath];
-        },
-        moduleMeta: function(modName) {
-            return this._mods[modName];
         },
         resolveDependencies: function(modName) {
             return this._depmod.resolve(this._mods, modName);
@@ -89,9 +88,9 @@ module.exports = function (grunt) {
     // export the interface
     grunt.depmod_tracker = {
         resolveDependencies: deps.resolveDependencies.bind(deps),
-        moduleMeta: deps.moduleMeta.bind(deps),
         depmod: deps.depmod.bind(deps),
         update: deps.update.bind(deps),
+
         paths: deps.paths.bind(deps),
         deps: deps._mods
     };
@@ -110,19 +109,31 @@ module.exports = function (grunt) {
           });
 
           var fs = options.fs;
+          var src = this.data.src;
+
+          // configure 'grunt-contrib-watch' to watch the same pattern
+          grunt.config.set('watch.depmod-tracker', {
+              // TODO: the depmod-tracker should create this 'watch' target
+              files: src,
+              tasks: [],
+              options: {
+                  nospawn: true
+              }
+          });
 
           grunt.event.on('watch', function(action, filepath) {
-              console.log('watch:tracker', filepath);
-
               // drop the file from the caching filesystem
               fs && fs.invalidate && fs.invalidate(filepath);
 
               // invalidate old dependencies and resolve new ones
-              deps.update(filepath);
+              if (grunt.file.isMatch(src, filepath)) {
+                  console.log('depmod-tracker: Parsing', filepath);
+                  deps.update(filepath);
+              }
           });
 
           // parse the deps of the watched files now
-          deps.init(f.src, {
+          deps.init(src, {
               processName: options.processName,
               aliases: options.aliases,
               fs: fs
