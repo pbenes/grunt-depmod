@@ -21,7 +21,7 @@ module.exports = function (grunt) {
           var deps = depmod.getDepmod(f.src, options);
           if (f.dest) {
               var contents = JSON.stringify(deps);
-              grunt.file.write(f.dest, contents);
+              grunt.file.write(f.dest, (options.banner || '') + contents);
           }
       }, this);
   });
