@@ -8,7 +8,7 @@
         "depmod"
     ],
     "author": "Adam Kloboucnik <adam.kloboucnik@gooddata.com>",
-    "license": "MIT",
+    "license": "BSD",
 
     "scripts": {
         "test": "grunt test"

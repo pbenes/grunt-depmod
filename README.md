@@ -4,6 +4,23 @@ grunt-depmod
 Analyses .js files for various module systems and extracts the module names
 and dependency information.
 
+Recognizes the AMD
+
+```
+define('module-name', ['dep1-module'], function(dep1) {
+    // ...
+});
+```
+
+and the YUI3 module convention
+
+```
+YUI.add('module-name', function(Y) {
+    // ...
+}, '0.0.1', { requires: ['dep1-module'] });
+```
+
+
 Tasks
 -----
 
@@ -11,6 +28,7 @@ Tasks
 
 Generate the depmod information in JSON format
 
+```
 {
    'depmod': {
        other: {
@@ -24,6 +42,7 @@ Generate the depmod information in JSON format
        }
    }
 }
+```
 
 
 ### depmod-tracker
@@ -31,6 +50,7 @@ Generate the depmod information in JSON format
 Analyze the depmod information and watch for changes. This can be further
 used to consume the depmod information from within other grunt tasks.
 
+```
 {
    'depmod-tracker': {
        app: {
@@ -40,6 +60,7 @@ used to consume the depmod information from within other grunt tasks.
        }
    }
 }
+```
 
 
 ### depmod-resolve
@@ -47,6 +68,7 @@ used to consume the depmod information from within other grunt tasks.
 Provide a list of files necessary for the specified module to load
 with all transitive dependencies.
 
+```
 {
    'depmod-resolve': {
        app: {
@@ -55,4 +77,10 @@ with all transitive dependencies.
        }
    }
 }
+```
 
+
+Copyright
+---------
+
+Copyright (c) 2013, GoodData Corporation (BSD License)
