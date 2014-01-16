@@ -128,7 +128,7 @@ module.exports = function (grunt) {
               // invalidate old dependencies and resolve new ones
               if (grunt.file.isMatch(src, filepath)) {
                   console.log('depmod-tracker: Parsing', filepath);
-                  deps.update(filepath);
+                  grunt.depmod_tracker.update(filepath);
               }
           });
 
