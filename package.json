@@ -9,6 +9,10 @@
   ],
   "author": "Adam Kloboucnik <adam.kloboucnik@gooddata.com>",
   "license": "SEE LICENSE IN LICENSE.txt",
+  "files": [
+    "lib",
+    "tasks"
+  ],
   "scripts": {
     "test": "grunt test"
   },
