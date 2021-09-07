@@ -1,7 +1,7 @@
 module.exports = function(grunt) {
     grunt.initConfig({
         run: {
-            testmocha: {
+            testjest: {
                 options: {
                     wait: true
                 },
@@ -19,12 +19,11 @@ module.exports = function(grunt) {
         }
     });
 
-    grunt.loadNpmTasks('grunt-mocha');
     grunt.loadNpmTasks('grunt-run');
 
     grunt.loadTasks('tasks');
 
-    grunt.registerTask('test', ['depmod:test', 'run:testmocha']);
+    grunt.registerTask('test', ['depmod:test', 'run:testjest']);
 
     // Default task.
     grunt.registerTask('default', 'test');

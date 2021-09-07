@@ -1,5 +1,4 @@
-var should = require('should'),
-    grunt = require('grunt'),
+var grunt = require('grunt'),
     depmod = require('../tasks/depmod');
 
 describe('Obtain a JS file dependency', function() {
